@@ -273,7 +273,7 @@ export const addJob = (req, res) => {
     if (err) return res.status(403).json("Token is not valid!");
     const dateTimeStr = `${req.body.date} ${req.body.time}`;
     const q =
-      "INSERT INTO jobs(`name`, `category`, `pay`, `schedule`, `location`, `description`, `contact`, `userId`, `img`, `createdAt`) VALUES (?)";
+      "INSERT INTO jobs(`name`, `category`, `pay`, `schedule`, `location`, `description`, `contact`, `userId`, `img`, `createdAt`, `url`) VALUES (?)";
     const values = [
       req.body.name,
       req.body.category,
@@ -286,7 +286,8 @@ export const addJob = (req, res) => {
       req.body.contact,
       userInfo.id,
       req.body.img,
-      moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
+      moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+      req.body.url
     ];
 
     db.query(q, [values], (err, data) => {
