@@ -37,8 +37,8 @@ app.use(express.json())
 
 // Enable CORS for the specified origin
 app.use(cors({
-    //origin: "http://localhost:3000",
-    origin: "https://www.postsstation.com",
+    origin: "http://localhost:3000",
+    //origin: "https://www.postsstation.com",
     methods: ["GET", "POST", "DELETE", "FETCH", "PUT"],
     credentials: true
 }));
@@ -254,10 +254,10 @@ app.use("/api/stories", storyRoutes)
 app.use("/api/embeds", embedRoutes)
 app.use("/api/ads", adRoutes)
 
-app.listen(process.env.PORT || PORT, ()=>{
-    console.log("api working!")
-})
+// app.listen(process.env.PORT || PORT, ()=>{
+//     console.log("api working!")
+// })
 
-//  app.listen(8800, ()=>{
-//      console.log("API working!")
-//  })
+ app.listen(8800, ()=>{
+     console.log("API working!")
+ })

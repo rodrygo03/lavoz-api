@@ -8,9 +8,9 @@ import crypto from "crypto";
 export const register = (req,res)=>{
     // CHECK IF USER EXITS
 
-    const q = "SELECT * FROM users WHERE username = ?" // ? provides extra security instead of req.body etc.
+    const q = "SELECT * FROM users WHERE email = ?" // ? provides extra security instead of req.body etc.
     
-    db.query(q,[req.body.username], (err,data)=>{
+    db.query(q,[req.body.email], (err,data)=>{
         if(err) return res.status(500).json(err)
         if(data.length) return res.status(409).json("User already exists!")
         // CREATE A NEW USER   
@@ -18,13 +18,12 @@ export const register = (req,res)=>{
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-        const q = "INSERT INTO users (`username`,`email`,`password`,`name`,`account_type`) VALUE (?)";
+        const q = "INSERT INTO users (`username`,`email`,`password`,`account_type`) VALUE (?)";
 
         const values = [
             req.body.username,
             req.body.email,
             hashedPassword,
-            req.body.name,
             req.body.account_type
         ];
 
