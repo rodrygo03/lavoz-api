@@ -1,9 +1,12 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv"
+
+dotenv.config()
 
 export const createTokens = (user) => {
     const accessToken = jwt.sign(
         { username: user.username, id: user.id }, 
-        "ascxvdfTuwerj4529asdf!/-adsf"
+        process.env.JWT_SECRET
     );
 
     return accessToken;
@@ -17,7 +20,7 @@ export const createTokens = (user) => {
 //     }
 
 //     try {
-//         const validToken = jwt.verify(accessToken, "ascxvdfTuwerj4529asdf!/-adsf");
+//         const validToken = jwt.verify(accessToken, process.env.JWT_SECRET);
 //         if (validToken) {
 //             req.authenticated = true;
 //             return next()

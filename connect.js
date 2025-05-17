@@ -1,12 +1,14 @@
 import mysql from "mysql";
+import dotenv from "dotenv";
 
+dotenv.config();
 
 export const db = mysql.createConnection({
-    host:"bv2rebwf6zzsv341.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-    user:"l6r7opakpr9pzdhb",
-    password:"vdig3ugs288l9zcd",
-    database:"l64hve0k6by5iu5h",
-    charset: "utf8mb4",
-    migrate: 'safe'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    charset: process.env.DB_CHARSET,
+    migrate: process.env.DB_MIGRATE,
 });
 

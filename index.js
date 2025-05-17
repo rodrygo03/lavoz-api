@@ -37,7 +37,7 @@ app.use(express.json())
 
 // Enable CORS for the specified origin
 app.use(cors({
-    //origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
     origin: "https://www.postsstation.com",
     methods: ["GET", "POST", "DELETE", "FETCH", "PUT"],
     credentials: true
@@ -60,7 +60,7 @@ const randomImageName = (filename, bytes = 32) => {
 };
 
 const s3 = new S3Client({
-    accessKeyId: process.env.ACCESS_KEY,
+    // accessKeyId: process.env.ACCESS_KEY,
     credentials: {
         accessKeyId: process.env.ACCESS_KEY,
         secretAccessKey: process.env.SECRET_ACCESS_KEY,
@@ -254,7 +254,8 @@ app.use("/api/stories", storyRoutes)
 app.use("/api/embeds", embedRoutes)
 app.use("/api/ads", adRoutes)
 
-app.listen(process.env.PORT || PORT, ()=>{
+const PORT = process.env.PORT || 8800;
+app.listen(PORT, ()=>{
     console.log("api working!")
 })
 
