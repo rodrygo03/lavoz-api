@@ -5,6 +5,8 @@ import { createTokens } from "../jwt.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export const register = (req,res)=>{
     // CHECK IF USER EXITS
 
@@ -29,12 +31,12 @@ export const register = (req,res)=>{
 
         db.query(q,[values],(err, data)=>{
             if(err) return res.status(500).json(err);
-            const token = jwt.sign({id: data.insertId}, "ascxvdfTuwerj4529asdf!/-adsf");
+            const token = jwt.sign({id: data.insertId}, process.env.JWT_SECRET);
             res.cookie("accessToken", token, {
                 maxAge: 60*60*24*30*1000,
                 httpOnly: true,
-                sameSite: "none",
-                secure: true
+                sameSite: isProduction ? "none" : "lax",
+                secure: isProduction
             }).status(200).json({id: data.insertId});
             console.log("logged in");
         });
@@ -58,13 +60,13 @@ export const login = (req,res)=>{
 
         const {password, ...others} = data[0];
         //console.log(data[0].id)
-        const token = jwt.sign({ id: data[0].id }, "ascxvdfTuwerj4529asdf!/-adsf");
+        const token = jwt.sign({ id: data[0].id }, process.env.JWT_SECRET);
   
         res.cookie("accessToken", token, {
             maxAge: 60*60*24*30*1000,
             httpOnly: true,
-            sameSite: "none",
-            secure: true
+            sameSite: isProduction ? "none" : "lax",
+            secure: isProduction
         }).status(200).json(others);
         console.log("logged in");
     });
@@ -74,8 +76,9 @@ export const login = (req,res)=>{
 export const logout = (req,res)=>{
     console.log("logged out")
     res.clearCookie("accessToken", {
-        secure: true,
-        sameSite: "none"
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        httpOnly: true,
     }).status(200).json("User has been logged out.")
 }
 

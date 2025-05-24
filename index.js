@@ -27,6 +27,7 @@ import fs from "fs";
 // import mozjpeg from "imagemin-mozjpeg";
 
 const app = express();
+const isProduction = process.env.NODE_ENV === "production";
 
 //middlewares
 app.use((req,res,next)=>{
@@ -37,8 +38,7 @@ app.use(express.json())
 
 // Enable CORS for the specified origin
 app.use(cors({
-    // origin: "http://localhost:3000",
-    origin: "https://www.postsstation.com",
+    origin: isProduction ? "https://www.postsstation.com" : "http://localhost:3000",
     methods: ["GET", "POST", "DELETE", "FETCH", "PUT"],
     credentials: true
 }));
@@ -258,7 +258,3 @@ const PORT = process.env.PORT || 8800;
 app.listen(PORT, ()=>{
     console.log("api working!")
 })
-
-//  app.listen(8800, ()=>{
-//      console.log("API working!")
-//  })
