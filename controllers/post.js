@@ -45,7 +45,7 @@ export const getLatestNews = (req, res) => {
 
 //   if (!token) return res.status(401).json("Not logged in!");
 
-//   jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+//   jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
 //     if (err) return res.status(403).json("Token is not valid!");
 //     const q =
 //       userId !== "undefined"
@@ -77,7 +77,7 @@ export const getPosts = async (req, res) => {
   // Check if token is present
   if (token) {
     // If token is present, verify it to get user info
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) {
         // If token verification fails, proceed without user info
         console.error("Error verifying token:", err);
@@ -163,7 +163,7 @@ export const findPost = (req, res) => {
 export const addPost = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("Not logged in!");
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
       const q =
         "INSERT INTO posts(`desc`, `img0`, `img1`, `img2`, `img3`, `img4`, `img5`, `img6`, `img7`, `img8`, `img9`, `createdAt`, `userId`, `category`, `flag`, `article`, `url`) VALUES (?)";
@@ -196,7 +196,7 @@ export const addPost = (req, res) => {
 export const addShort = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const q =
       "INSERT INTO shorts(`desc`, `videoURL`, `createdAt`, `userId`) VALUES (?)";
@@ -226,11 +226,11 @@ export const addEvent = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const dateTimeStr = `${req.body.date} ${req.body.time}`;
     const q =
-      "INSERT INTO events(`name`, `location`, `date`, `description`, `file`, `url`, `userId`) VALUES (?)";
+      "INSERT INTO events(`name`, `location`, `date`, `description`, `file`, `url`, `userId`, `category`) VALUES (?)";
     const values = [
       req.body.name,
       req.body.location,
@@ -238,7 +238,8 @@ export const addEvent = (req, res) => {
       req.body.description,
       req.body.img,
       req.body.url,
-      userInfo.id
+      userInfo.id,
+      req.body.category
     ];
     db.query(q, [values], (err, data) => {
       if (err) return res.status(500).json(err);
@@ -251,7 +252,7 @@ export const deleteEvent = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
     const q =
@@ -269,7 +270,7 @@ export const addJob = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const dateTimeStr = `${req.body.date} ${req.body.time}`;
     const q =
@@ -301,7 +302,7 @@ export const deleteJob = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
     const q =
@@ -319,7 +320,7 @@ export const deletePost = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", async (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, async (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const q =
       "DELETE FROM posts WHERE `id`=?";
@@ -335,7 +336,7 @@ export const deleteShort = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", async (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, async (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const q =
       "DELETE FROM shorts WHERE `id`=?";
