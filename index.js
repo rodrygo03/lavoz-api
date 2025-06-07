@@ -38,9 +38,28 @@ app.use(express.json())
 
 // Enable CORS for the specified origin
 app.use(cors({
-    origin: isProduction ? "https://www.postsstation.com" : "http://localhost:3000",
-    methods: ["GET", "POST", "DELETE", "FETCH", "PUT"],
-    credentials: true
+  origin: (origin, callback) => {
+    if (isProduction) {
+      const allowedProd = ["https://www.postsstation.com"];
+      if (!origin || allowedProd.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS (prod)"));
+      }
+    } else {
+      const allowedDev = [
+        "http://localhost:3000",  // machine browser
+        process.env.NETWORK_ADDR, // network browsing (use computer ip address | mac: ifconfig -> en0: ... inet xx.xxx.x.xxx)
+      ];
+      if (!origin || allowedDev.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS (dev)"));
+      }
+    }
+  },
+  methods: ["GET", "POST", "DELETE", "PUT"],
+  credentials: true,
 }));
 app.use(cookieParser());
 
@@ -255,6 +274,13 @@ app.use("/api/embeds", embedRoutes)
 app.use("/api/ads", adRoutes)
 
 const PORT = process.env.PORT || 8800;
-app.listen(PORT, ()=>{
-    console.log("api working!")
-})
+if (isProduction) {
+    app.listen(PORT, () => {
+        console.log(`API running on port ${PORT} (PROD)`);
+});
+} else {
+    const HOST = '0.0.0.0';
+    app.listen(PORT, HOST, () => {
+        console.log(`API running at http://${HOST}:${PORT} (DEV)`);
+    });
+}
