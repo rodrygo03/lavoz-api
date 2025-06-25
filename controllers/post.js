@@ -132,7 +132,7 @@ export const getEvents = (req, res) => {
     const q =
      `SELECT e.*, u.id AS userId, username, profilePic FROM events AS e JOIN users AS u ON (u.id = e.userId)
      WHERE e.date >= DATE(NOW()) 
-     ORDER BY e.date DESC`;
+     ORDER BY e.date ASC`;
 
     db.query(q, (err, data) => {
       if (err) return res.status(500).json(err);
