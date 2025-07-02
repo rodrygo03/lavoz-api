@@ -8,7 +8,7 @@ export const getPendingAds = async (req, res) => {
   
     if (!token) return res.status(401).json("Not logged in!");
   
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
   
       const q =
@@ -26,7 +26,7 @@ export const getApprovedAds = async (req, res) => {
   
     if (!token) return res.status(401).json("Not logged in!");
   
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
   
       const q =
@@ -43,7 +43,7 @@ export const postAd = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("Not logged in!");
 
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
       const sanitizedDesc = req.body.desc.replace(/\n/g, '\n');
       const q =
@@ -77,7 +77,7 @@ export const approveAd = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("Not logged in!");
   
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
       const q =
         "UPDATE ads SET approved = ? WHERE id = ?";

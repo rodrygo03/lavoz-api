@@ -7,7 +7,7 @@ export const getStories = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("Not logged in!");
   
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
       const q = `SELECT s.*, u.id AS userId, username, profilePic FROM stories AS s 
       JOIN users AS u ON (u.id = s.userId)
@@ -33,7 +33,7 @@ export const getStories = (req, res) => {
 //   // Check if token is present
 //   if (token) {
 //     // If token is present, verify it to get user info
-//     jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+//     jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
 //       if (err) {
 //         // If token verification fails, return 403 status
 //         console.error("Error verifying token:", err);
@@ -57,7 +57,7 @@ export const getStories = (req, res) => {
       const token = req.cookies.accessToken;
       if (!token) return res.status(401).json("Not logged in!");
     
-      jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+      jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
         if (err) return res.status(403).json("Token is not valid!");
     
         const q =
@@ -79,7 +79,7 @@ export const getStories = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("Not logged in!");
   
-    jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
   
       const q =

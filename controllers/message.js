@@ -6,7 +6,7 @@ export const getMessages = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
   
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const q = `
       SELECT m.*, u.id AS userId, name, profilePic
@@ -36,7 +36,7 @@ export const getMessages = (req, res) => {
 export const getNewMessages = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const q = `SELECT * FROM messages WHERE \`read\` = 0 AND msgTo = ?`;
     db.query(q, [userInfo.id], (err, data) => {
@@ -69,7 +69,7 @@ export const getAllMessages = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
     const currentUserId = userInfo.id; // Assuming the user ID is stored in the 'id' property of userInfo
@@ -124,7 +124,7 @@ export const addMessage = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
-  jwt.verify(token, "ascxvdfTuwerj4529asdf!/-adsf", (err, userInfo) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     const q = "INSERT INTO messages(`msg`, `createdAt`, `msgTo`, `msgFrom`) VALUES (?)";
     const values = [
