@@ -31,9 +31,9 @@ export const register = (req,res)=>{
 
         db.query(q,[values],(err, data)=>{
             if(err) return res.status(500).json(err);
-            const token = jwt.sign({id: data.insertId}, process.env.JWT_SECRET);
+            const token = jwt.sign({id: data.insertId}, process.env.JWT_SECRET, {expiresIn: '15d'});
             res.cookie("accessToken", token, {
-                maxAge: 60*60*24*30*1000,
+                maxAge: 15*24*60*60*1000,
                 httpOnly: true,
                 sameSite: isProduction ? "none" : "lax",
                 secure: isProduction
