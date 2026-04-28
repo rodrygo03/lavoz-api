@@ -12,6 +12,7 @@ import storyRoutes from "./routes/stories.js";
 import embedRoutes from "./routes/embeds.js";
 import adRoutes from "./routes/ads.js";
 import projectRoutes from "./routes/projects.js";
+import serviceRoutes from "./routes/services.js";
 import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
@@ -274,6 +275,7 @@ app.use("/api/stories", storyRoutes)
 app.use("/api/embeds", embedRoutes)
 app.use("/api/ads", adRoutes)
 app.use("/api/projects", projectRoutes)
+app.use("/api/services", serviceRoutes)
 
 const PORT = process.env.PORT || 8800;
 if (isProduction) {
