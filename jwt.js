@@ -4,28 +4,25 @@ import dotenv from "dotenv"
 dotenv.config()
 
 export const createTokens = (user) => {
-    const accessToken = jwt.sign(
-        { username: user.username, id: user.id }, 
+    return jwt.sign(
+        { id: user.id, username: user.username, account_type: user.account_type },
         process.env.JWT_SECRET
     );
-
-    return accessToken;
 };
 
-// export const validateToken = (req, res, next) => {
-//     const accessToken = req.cookies["accessToken"];
+export const validateToken = (requiredRoles = []) => (req, res, next) => {
+    const accessToken = req.cookies["accessToken"];
+    if (!accessToken) return res.status(401).json({ error: "Not logged in!" });
 
-//     if (!accessToken) {
-//         return res.status(400).json({error: "User not authenticated!"});
-//     }
+    try {
+        const userInfo = jwt.verify(accessToken, process.env.JWT_SECRET);
+        req.user = userInfo;
 
-//     try {
-//         const validToken = jwt.verify(accessToken, process.env.JWT_SECRET);
-//         if (validToken) {
-//             req.authenticated = true;
-//             return next()
-//         }
-//     } catch(err) {
-//         return res.status(400).json({error: err}); 
-//     }
-// }
+        if (requiredRoles.length && !requiredRoles.includes(userInfo.account_type)) {
+            return res.status(403).json({ error: "Forbidden" });
+        }
+        return next();
+    } catch (err) {
+        return res.status(403).json({ error: "Token is not valid!" });
+    }
+};

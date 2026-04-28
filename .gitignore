@@ -1,3 +1,8 @@
 node_modules
 .env
 .DS_Store
+
+# scratch files
+BACKEND_DEV_PLAN.md
+platform_report.pdf
+

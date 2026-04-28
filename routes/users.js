@@ -1,12 +1,13 @@
 import express from "express";
 import { getUser, getAllUsers, updateUser, getFollowers, getFollowing } from "../controllers/user.js";
+import { validateToken } from "../jwt.js";
 
 const router = express.Router()
 
 router.get("/find/:userId", getUser);
-router.get("/", getAllUsers);
-router.get("/followers", getFollowers);
-router.get("/following", getFollowing);
-router.put("/", updateUser);
+router.get("/", validateToken(), getAllUsers);
+router.get("/followers", validateToken(), getFollowers);
+router.get("/following", validateToken(), getFollowing);
+router.put("/", validateToken(), updateUser);
 
 export default router

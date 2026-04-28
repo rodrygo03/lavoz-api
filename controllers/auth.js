@@ -1,6 +1,5 @@
 import { db } from "../connect.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { createTokens } from "../jwt.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
@@ -31,7 +30,7 @@ export const register = (req,res)=>{
 
         db.query(q,[values],(err, data)=>{
             if(err) return res.status(500).json(err);
-            const token = jwt.sign({id: data.insertId}, process.env.JWT_SECRET, {expiresIn: '15d'});
+            const token = createTokens({ id: data.insertId, username: req.body.username, account_type: req.body.account_type });
             res.cookie("accessToken", token, {
                 maxAge: 15*24*60*60*1000,
                 httpOnly: true,
@@ -60,7 +59,7 @@ export const login = (req,res)=>{
 
         const {password, ...others} = data[0];
         //console.log(data[0].id)
-        const token = jwt.sign({ id: data[0].id }, process.env.JWT_SECRET);
+        const token = createTokens(data[0]);
   
         res.cookie("accessToken", token, {
             maxAge: 60*60*24*30*1000,
