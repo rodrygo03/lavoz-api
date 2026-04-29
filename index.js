@@ -13,6 +13,7 @@ import embedRoutes from "./routes/embeds.js";
 import adRoutes from "./routes/ads.js";
 import projectRoutes from "./routes/projects.js";
 import serviceRoutes from "./routes/services.js";
+import escrowRoutes from "./routes/escrows.js";
 import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
@@ -276,6 +277,7 @@ app.use("/api/embeds", embedRoutes)
 app.use("/api/ads", adRoutes)
 app.use("/api/projects", projectRoutes)
 app.use("/api/services", serviceRoutes)
+app.use("/api/escrows", escrowRoutes)
 
 const PORT = process.env.PORT || 8800;
 if (isProduction) {
