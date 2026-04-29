@@ -14,6 +14,7 @@ import adRoutes from "./routes/ads.js";
 import projectRoutes from "./routes/projects.js";
 import serviceRoutes from "./routes/services.js";
 import escrowRoutes from "./routes/escrows.js";
+import artifactRoutes from "./routes/artifacts.js";
 import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
@@ -69,16 +70,9 @@ app.use(cookieParser());
 // OPTION 2: MULTER MEMORY STORAGE + S3 BUCKET: WORKS
 dotenv.config();
 const randomImageName = (filename, bytes = 32) => {
-    // Generate a random name
     const randomName = crypto.randomBytes(bytes).toString('hex');
-  
-    // Get the original file extension
-    const originalExtension = filename.toLowerCase().match(/\.(jpg|jpeg|png|gif||webp|mp4|mp3|mov|heic|m4a)$/);
-  
-    // If the original extension exists, append it to the random name; otherwise, use a default extension
-    const finalName = originalExtension ? `${randomName}${originalExtension[0]}` : `${randomName}.bin`;
-  
-    return finalName;
+    const ext = path.extname(filename).toLowerCase();
+    return ext ? `${randomName}${ext}` : randomName;
 };
 
 const s3 = new S3Client({
@@ -278,6 +272,7 @@ app.use("/api/ads", adRoutes)
 app.use("/api/projects", projectRoutes)
 app.use("/api/services", serviceRoutes)
 app.use("/api/escrows", escrowRoutes)
+app.use("/api/artifacts", artifactRoutes)
 
 const PORT = process.env.PORT || 8800;
 if (isProduction) {

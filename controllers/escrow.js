@@ -116,26 +116,37 @@ export const getEscrowById = (req, res) => {
             p.deliverables AS projectDeliverables,
             s.username AS studentUsername, s.profilePic AS studentProfilePic,
             l.username AS localUsername,   l.profilePic AS localProfilePic,
-            a.username AS adminUsername
+            a.username AS adminUsername,
+            ar.id AS artifact_id, ar.fileUrl AS artifact_fileUrl,
+            ar.description AS artifact_description, ar.createdAt AS artifact_createdAt
         FROM escrows AS e
         JOIN projects AS p ON (p.id = e.projectId)
         JOIN users    AS s ON (s.id = e.studentId)
         JOIN users    AS l ON (l.id = e.localId)
-        LEFT JOIN users AS a ON (a.id = e.adminId)
+        LEFT JOIN users     AS a  ON (a.id = e.adminId)
+        LEFT JOIN artifacts AS ar ON (ar.id = (
+            SELECT id FROM artifacts WHERE escrowId = e.id ORDER BY createdAt DESC LIMIT 1
+        ))
         WHERE e.id = ?
     `;
     db.query(q, [req.params.id], (err, data) => {
         if (err) return res.status(500).json(err);
         if (!data || data.length === 0) return res.status(404).json({ error: "Escrow not found." });
 
-        const escrow = data[0];
+        const row = data[0];
         const uid  = req.user.id;
         const role = req.user.account_type;
-        const isParticipant = escrow.studentId === uid || escrow.localId === uid;
+        const isParticipant = row.studentId === uid || row.localId === uid;
 
         if (role !== "admin" && !isParticipant) {
             return res.status(403).json({ error: "Forbidden." });
         }
+
+        // Pull artifact_* columns into a nested object (null when no artifact exists)
+        const { artifact_id, artifact_fileUrl, artifact_description, artifact_createdAt, ...escrow } = row;
+        escrow.artifact = artifact_id
+            ? { id: artifact_id, fileUrl: artifact_fileUrl, description: artifact_description, createdAt: artifact_createdAt }
+            : null;
 
         return res.status(200).json(escrow);
     });
@@ -176,25 +187,6 @@ export const updateEscrowStatus = (req, res) => {
             if (err) return res.status(500).json(err);
             return res.status(200).json("Status updated.");
         });
-    });
-};
-
-// PUT /api/escrows/:id/submit — student submits deliverables (active → submitted)
-export const submitEscrow = (req, res) => {
-    fetchEscrow(req.params.id, (err, escrow) => {
-        if (err) return res.status(500).json(err);
-        if (!escrow) return res.status(404).json({ error: "Escrow not found." });
-        if (escrow.studentId !== req.user.id) return res.status(403).json({ error: "Forbidden." });
-        if (escrow.status !== "active") return res.status(409).json({ error: "Only active escrows can be submitted." });
-
-        db.query(
-            "UPDATE escrows SET status = 'submitted', submittedAt = ? WHERE id = ?",
-            [now(), escrow.id],
-            (err) => {
-                if (err) return res.status(500).json(err);
-                return res.status(200).json("Escrow submitted.");
-            }
-        );
     });
 };
 
