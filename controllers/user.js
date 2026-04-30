@@ -13,16 +13,20 @@ export const getUser = (req, res) => {
 };
 
 export const getAllUsers = (req, res) => {
-    const q = `SELECT * FROM users`;
-    db.query(q, (err, data) => {
+    const { type } = req.query;
+    const allowed = ["student", "local", "admin"];
+
+    const q = type && allowed.includes(type)
+        ? "SELECT * FROM users WHERE account_type = ?"
+        : "SELECT * FROM users";
+    const params = type && allowed.includes(type) ? [type] : [];
+
+    db.query(q, params, (err, data) => {
       if (err) {
         console.error("Error fetching users:", err);
         return res.status(500).json({ error: "Internal Server Error" });
       }
-      const usersWithoutPassword = data.map((user) => {
-        const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword;
-      });
+      const usersWithoutPassword = data.map(({ password, ...u }) => u);
       return res.json(usersWithoutPassword);
     });
 };

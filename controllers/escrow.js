@@ -17,19 +17,32 @@ const fetchEscrow = (id, cb) => {
 
 // POST /api/escrows — admin only (Escrow Lock)
 export const createEscrow = (req, res) => {
-    const { projectId, studentId, localId } = req.body;
+    const { projectId, studentId } = req.body;
 
-    if (!projectId || !studentId || !localId) {
-        return res.status(400).json({ error: "projectId, studentId, and localId are required." });
+    if (!projectId || !studentId) {
+        return res.status(400).json({ error: "projectId and studentId are required." });
     }
 
-    const q = "INSERT INTO escrows(`projectId`, `studentId`, `localId`, `adminId`, `status`, `pendingAt`, `createdAt`) VALUES (?)";
-    const ts = now();
-    const values = [projectId, studentId, localId, req.user.id, "pending", ts, ts];
-
-    db.query(q, [values], (err, data) => {
+    // Derive localId from the project owner — never trust the client for this
+    db.query("SELECT userId FROM projects WHERE id = ? AND status = 'open'", [projectId], (err, projects) => {
         if (err) return res.status(500).json(err);
-        return res.status(201).json({ id: data.insertId });
+        if (!projects || projects.length === 0) return res.status(404).json({ error: "Project not found or is closed." });
+
+        const localId = projects[0].userId;
+
+        db.query("SELECT id FROM users WHERE id = ? AND account_type = 'student'", [studentId], (err, students) => {
+            if (err) return res.status(500).json(err);
+            if (!students || students.length === 0) return res.status(404).json({ error: "Student not found." });
+
+            const q = "INSERT INTO escrows(`projectId`, `studentId`, `localId`, `adminId`, `status`, `pendingAt`, `createdAt`) VALUES (?)";
+            const ts = now();
+            const values = [projectId, studentId, localId, req.user.id, "pending", ts, ts];
+
+            db.query(q, [values], (err, data) => {
+                if (err) return res.status(500).json(err);
+                return res.status(201).json({ id: data.insertId });
+            });
+        });
     });
 };
 
