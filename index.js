@@ -44,7 +44,7 @@ app.use(express.json())
 app.use(cors({
   origin: (origin, callback) => {
     if (isProduction) {
-      const allowedProd = ["https://www.postsstation.com"];
+      const allowedProd = ["https://www.postsstation.com", "https://lavoz-client.vercel.app"];
       if (!origin || allowedProd.includes(origin)) {
         return callback(null, true);
       } else {
