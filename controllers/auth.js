@@ -36,7 +36,7 @@ export const register = (req,res)=>{
                 httpOnly: true,
                 sameSite: isProduction ? "none" : "lax",
                 secure: isProduction
-            }).status(200).json({id: data.insertId});
+            }).status(200).json({ id: data.insertId, token });
             console.log("logged in");
         });
     });
@@ -58,15 +58,14 @@ export const login = (req,res)=>{
         if(!checkPassword) return res.status(400).json("Wrong password or email!");
 
         const {password, ...others} = data[0];
-        //console.log(data[0].id)
         const token = createTokens(data[0]);
-  
+
         res.cookie("accessToken", token, {
             maxAge: 60*60*24*30*1000,
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
             secure: isProduction
-        }).status(200).json(others);
+        }).status(200).json({ ...others, token });
         console.log("logged in");
     });
     

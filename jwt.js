@@ -11,7 +11,8 @@ export const createTokens = (user) => {
 };
 
 export const validateToken = (requiredRoles = []) => (req, res, next) => {
-    const accessToken = req.cookies["accessToken"];
+    const authHeader = req.headers["authorization"];
+    const accessToken = (authHeader && authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null) || req.cookies["accessToken"];
     if (!accessToken) return res.status(401).json({ error: "Not logged in!" });
 
     try {
